@@ -123,6 +123,7 @@ void setup() {
   usbMIDI.setHandleNoteOn(myNoteOn);
   usbMIDI.setHandleNoteOff(myNoteOff);
   usbMIDI.setHandleControlChange(myControlChange);
+  usbMIDI.setHandleStop(panic);
 
   Serial.begin(115200);  // initialize serial:
   Serial.println("Teensy Serial -≥ DMX tester");
