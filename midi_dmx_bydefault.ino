@@ -123,13 +123,16 @@ void setup() {
   usbMIDI.setHandleNoteOn(myNoteOn);
   usbMIDI.setHandleNoteOff(myNoteOff);
   usbMIDI.setHandleControlChange(myControlChange);
+
   Serial.begin(115200);  // initialize serial:
+  Serial.println("Teensy Serial -≥ DMX tester");
+  Serial.println("Enter channel number [space] value [newline]");
 
   dmxTx.setRefreshRate(30); // 30 was ok
   dmxTx.setBreakTime(300); // 300 was ok
   dmxTx.setMABTime(120); //120 was ok
   dmxTx.begin();
-  
+
   panic();
 
   pinMode(LED_BUILTIN, OUTPUT);
@@ -137,5 +140,29 @@ void setup() {
 }
 
 void loop() {
+  byte x = 0;
+  byte y = 0;
+
+  while (Serial.available() > 0) {
+
+    x = Serial.parseInt();
+    y = Serial.parseInt();
+
+    // sentence:
+    if (Serial.read() == '\n') {
+      dmxTx.set(x, y);
+      //dmxTx.begin();
+
+
+      Serial.print(x);
+      Serial.print(" ");
+      Serial.println(y);
+
+      //Serial.print(" ");
+      //Serial.println(br1);
+
+    }
+  }
+
   usbMIDI.read();
 }
