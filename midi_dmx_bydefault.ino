@@ -131,7 +131,7 @@ void setup() {
   panic();
 
   pinMode(LED_BUILTIN, OUTPUT);
-  //digitalWriteFast(LED_BUILTIN, HIGH);
+  digitalWriteFast(LED_BUILTIN, HIGH);
 }
 
 void loop() {
