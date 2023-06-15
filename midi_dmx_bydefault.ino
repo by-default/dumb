@@ -113,10 +113,6 @@ void myControlChange(byte channel, byte control, byte value) {
 }
 
 void panic() {
-  dmxTx.setRefreshRate(30); // 30 was ok
-  dmxTx.setBreakTime(300); // 300 was ok
-  dmxTx.setMABTime(120); //120 was ok
-  dmxTx.begin();
   for (size_t i = 0; i < sizeof(MAP) / sizeof(MAP[0]); i++) {
     dmxTx.set(MAP[i].address, 0);
 
@@ -128,6 +124,12 @@ void setup() {
   usbMIDI.setHandleNoteOff(myNoteOff);
   usbMIDI.setHandleControlChange(myControlChange);
   Serial.begin(115200);  // initialize serial:
+
+  dmxTx.setRefreshRate(30); // 30 was ok
+  dmxTx.setBreakTime(300); // 300 was ok
+  dmxTx.setMABTime(120); //120 was ok
+  dmxTx.begin();
+  
   panic();
 
   pinMode(LED_BUILTIN, OUTPUT);
