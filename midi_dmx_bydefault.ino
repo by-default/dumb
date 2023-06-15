@@ -4,16 +4,16 @@
 /*
   each entry:
   {MIDI channel, MIDI note, DMX channel, parameter}
-  
+
   parameter is:
-  * DEFAULT_VALUE - velocity pass to DMX channel
-  * LIMIT(0...255) - limit maximum value of DMX
-  * DISCRETE - DMX set to 255 value by NOTEON, set to 0 by NOTEOFF, ignore velocity
-  * CONSTANT(x) - DMX set to x value by NOTEON, set to 0 by NOTEOFF, ignore velocity
-  
+    DEFAULT_VALUE - velocity pass to DMX channel
+    LIMIT(0...255) - limit maximum value of DMX
+    DISCRETE - DMX set to 255 value by NOTEON, set to 0 by NOTEOFF, ignore velocity
+    CONSTANT(x) - DMX set to x value by NOTEON, set to 0 by NOTEOFF, ignore velocity
+
   example for dimmer:
   {1, 20, 100, DEFAULT_VALUE} -- pass velocity of note 20, channel 1 to dimmer on DMX channel 100
-  
+
   example for dimmer with limited output:
   {1, 21, 103, LIMIT(120)} -- pass velocity of note 21, channel 1 to dimmer on DMX channel 105,
   dimmer value is no more 120
@@ -50,14 +50,14 @@ teensydmx::Sender dmxTx{Serial1};
 
 void setChannel(int channel, int note, int velocity) {
   // scan for all channel, find matching MIDI channel and note
-  for(size_t i = 0; i < sizeof(MAP)/sizeof(MAP[0]); i++) {
-    if(channel == MAP[i].channel && note == MAP[i].note) {
+  for (size_t i = 0; i < sizeof(MAP) / sizeof(MAP[0]); i++) {
+    if (channel == MAP[i].channel && note == MAP[i].note) {
       int value = -1;
 
-      if(MAP[i].param.isConstant) {
-        if(velocity > 0) {
+      if (MAP[i].param.isConstant) {
+        if (velocity > 0) {
           value = MAP[i].param.value;
-        } else if(MAP[i].param.handleOff) {
+        } else if (MAP[i].param.handleOff) {
           value = 0;
         } else {
           // just ignore noteoff
@@ -67,9 +67,9 @@ void setChannel(int channel, int note, int velocity) {
         value = constrain(velocity, 0, MAP[i].param.value);
       }
 
-      if(value >= 0) {
+      if (value >= 0) {
         dmxTx.set(MAP[i].address, value);
-        dmxTx.begin();
+        //dmxTx.begin();
       }
     }
   }
@@ -95,7 +95,7 @@ void myNoteOff(byte channel, byte note, byte velocity) {
   Serial.print(note, DEC);
   Serial.print(", velocity=");
   Serial.println(velocity, DEC);
-  
+
   setChannel(channel, note, 0);
 }
 
@@ -113,9 +113,13 @@ void myControlChange(byte channel, byte control, byte value) {
 }
 
 void panic() {
-  for(size_t i = 0; i < sizeof(MAP)/sizeof(MAP[0]); i++) {
+  dmxTx.setRefreshRate(30); // 30 was ok
+  dmxTx.setBreakTime(300); // 300 was ok
+  dmxTx.setMABTime(120); //120 was ok
+  dmxTx.begin();
+  for (size_t i = 0; i < sizeof(MAP) / sizeof(MAP[0]); i++) {
     dmxTx.set(MAP[i].address, 0);
-    dmxTx.begin();
+
   }
 }
 
@@ -123,7 +127,7 @@ void setup() {
   usbMIDI.setHandleNoteOn(myNoteOn);
   usbMIDI.setHandleNoteOff(myNoteOff);
   usbMIDI.setHandleControlChange(myControlChange);
-
+  Serial.begin(115200);  // initialize serial:
   panic();
 
   pinMode(LED_BUILTIN, OUTPUT);
