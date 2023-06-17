@@ -47,7 +47,8 @@ typedef struct {
 
 #define DEFAULT_VALUE {false,true,255}
 #define LIMIT(x) {false,true,x}
-#define DISCRETE {true,true,255}
 #define CONSTANT(x) {true,false,x}
+#define DISCRETE(x) {true,true,x}
+#define DISCRETE_FULL {true,true,255}
 
 #define MIDI_CC(x) (x + 127)
