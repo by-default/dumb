@@ -98,23 +98,23 @@ void setup() {
 }
 
 void loop() {
-  byte x = 0;
-  byte y = 0;
+  int address = 0;
+  byte value = 0;
 
   while (Serial.available() > 0) {
 
-    x = Serial.parseInt();
-    y = Serial.parseInt();
+    address = Serial.parseInt();
+    value = Serial.parseInt();
 
     // sentence:
     if (Serial.read() == '\n') {
-      dmxTx.set(x, y);
+      dmxTx.set(address, value);
       //dmxTx.begin();
 
 
-      Serial.print(x);
+      Serial.print(address);
       Serial.print(" ");
-      Serial.println(y);
+      Serial.println(value);
 
       //Serial.print(" ");
       //Serial.println(br1);
